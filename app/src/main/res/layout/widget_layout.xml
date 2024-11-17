@@ -1,16 +1,167 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:gravity="center">
+    android:padding="10dp">
 
-    <TextView
-        android:id="@+id/widget_text"
-        android:layout_width="wrap_content"
+    <!-- Vertical Layout for Text Displays -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello, Widget!"
-        android:textSize="18sp"
-        android:gravity="center"/>
-</LinearLayout>
+        android:orientation="horizontal">
+
+        <!-- Text Displays (Vertical Stack) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <!-- Converted Value Display -->
+            <TextView
+                android:id="@+id/widget_converted_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:padding="8dp"
+                android:text="€0.00"
+                android:textColor="#00796B"
+                android:textSize="20sp"
+                android:textStyle="italic" />
+
+            <!-- Input Display -->
+            <TextView
+                android:id="@+id/widget_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:padding="8dp"
+                android:text="0"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Buttons (Vertical Stack) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Spacer for vertical alignment (not a textview)-->
+            <TextView
+                android:layout_width="1dp"
+                android:layout_height="38dp"
+                android:text="" />
+
+            <!-- Buttons (Horizontal Stack) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_erase"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="←"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/button_reset"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="C"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Grid for Numeric Buttons -->
+    <GridLayout
+        android:id="@+id/grid_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:columnCount="3"
+        android:paddingTop="80dp">
+
+        <!-- Buttons for numbers 1-9 -->
+        <Button
+            android:id="@+id/button_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="1" />
+
+        <Button
+            android:id="@+id/button_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="2" />
+
+        <Button
+            android:id="@+id/button_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="3" />
+
+        <Button
+            android:id="@+id/button_4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="4" />
+
+        <Button
+            android:id="@+id/button_5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="5" />
+
+        <Button
+            android:id="@+id/button_6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="6" />
+
+        <Button
+            android:id="@+id/button_7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="7" />
+
+        <Button
+            android:id="@+id/button_8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="8" />
+
+        <Button
+            android:id="@+id/button_9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="9" />
+
+        <!-- Buttons for 0 and decimal -->
+        <Button
+            android:id="@+id/button_decimal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="." />
+
+        <Button
+            android:id="@+id/button_0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="0" />
+    </GridLayout>
+</FrameLayout>
