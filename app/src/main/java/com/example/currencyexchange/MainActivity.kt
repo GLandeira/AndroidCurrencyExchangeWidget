@@ -34,23 +34,29 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED) // Require network connectivity
+            .build()
+
         // Schedule a one-time work request to run immediately
         val oneTimeWorkRequest = OneTimeWorkRequestBuilder<CurrencyFetchWorker>()
+            .setConstraints(constraints)
             .build()
 
         WorkManager.getInstance(this).enqueueUniqueWork(
-            "CurrencyFetchOneTimeWork",
+            "CurrencyFetchWork",
             ExistingWorkPolicy.REPLACE,
             oneTimeWorkRequest
         )
 
         // Schedule periodic work
-        val workRequest = PeriodicWorkRequestBuilder<CurrencyFetchWorker>(12, TimeUnit.HOURS)
+        val workRequest = PeriodicWorkRequestBuilder<CurrencyFetchWorker>(0, TimeUnit.HOURS)
+            .setConstraints(constraints)
             .build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "CurrencyFetchWork",
-            ExistingPeriodicWorkPolicy.KEEP,
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
             workRequest
         )
     }

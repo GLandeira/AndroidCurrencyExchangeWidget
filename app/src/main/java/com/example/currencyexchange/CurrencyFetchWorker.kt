@@ -2,8 +2,11 @@ package com.example.currencyexchange
 
 import android.content.Context
 import android.util.Log
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import java.util.concurrent.TimeUnit
 
 class CurrencyFetchWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
@@ -14,17 +17,26 @@ class CurrencyFetchWorker(context: Context, workerParams: WorkerParameters) : Wo
         val baseCurrency = "EUR"
         val targetCurrencies = arrayOf("UYU", "USD")
 
-        Log.d("CurrencyWidgetProvider", "using api: $apiKey")
-        val rates = fetchConversionRate(apiKey, baseCurrency, targetCurrencies)
-        Log.d("CurrencyWidgetProvider", "Retrieved conversion rates: $rates")
-        //val rates = mapOf("UYU" to 1.0, "USD" to 2.0)
+        //Log.d("CurrencyWidgetProvider", "using api: $apiKey")
+//        val rates = fetchConversionRate(apiKey, baseCurrency, targetCurrencies)
+//        Log.d("CurrencyWidgetProvider", "Retrieved conversion rates: $rates")
+
+//        var rates: Map<String, Double> = emptyMap()
+//        val randomNumber = (1..10).random()
+//        Log.d("CurrencyWidgetProvider", "randomNumber: $randomNumber")
+//        if (randomNumber == 10) {
+//            Log.d("CurrencyWidgetProvider", "Passeeeeeeeeeeeeeeeeeeeeed")
+//            rates = mapOf("UYU" to 1.0, "USD" to 2.0)
+//        }
+
+        val rates = mapOf("UYU" to 1.0, "USD" to 2.0)
 
         if (rates.isNotEmpty()) {
             saveRatesToPreferences(rates)
             return Result.success()
         }
 
-        return Result.failure()
+        return Result.retry()
     }
 
     private fun saveRatesToPreferences(rates: Map<String, Double>) {
