@@ -11,7 +11,7 @@ import android.widget.RemoteViews
 
 class CurrencyWidgetProvider : AppWidgetProvider() {
     private var inputText = "0"
-    private val conversionRate = 40
+    private var euroToUyu = 40.0
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         for (appWidgetId in appWidgetIds) {
@@ -27,7 +27,6 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        Log.d("CurrencyWidgetProvider", "Received intent: $intent")
 
         val action = intent.action
         Log.d("CurrencyWidgetProvider", "Received action: $action")
@@ -57,8 +56,15 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
                 }
             }
 
-            Log.d("CurrencyWidgetProvider", "InputText: $inputText")
             saveInputText(context, appWidgetId, inputText) // Save the updated inputText
+
+            // Retrieve the stored conversion rates
+            val prefs = context.applicationContext.getSharedPreferences("CurrencyRates", Context.MODE_PRIVATE)
+
+            euroToUyu = prefs.getFloat("UYU", 0.0f).toDouble()
+            //val euroToUsd = prefs.getFloat("USD", 0.0f).toDouble()
+
+            Log.d("CurrencyWidgetProvider", "Retrieved conversion rates from applicationContext: $euroToUyu")
 
             // Update both TextViews
             updateTextViews(views)
@@ -84,15 +90,6 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             }
             val pendingIntent = PendingIntent.getBroadcast(context, i, intent, flags)
-
-            Log.d("CurrencyWidgetProvider", "Created: $pendingIntent")
-            val buttonId = context.resources.getIdentifier("button_$i", "id", context.packageName)
-            if (buttonId != 0) { // Ensure the button ID exists
-                Log.d("CurrencyWidgetProvider", "Setting PendingIntent for button_$i")
-                views.setOnClickPendingIntent(buttonId, pendingIntent)
-            } else {
-                Log.e("CurrencyWidgetProvider", "Button ID for button_$i not found")
-            }
 
             views.setOnClickPendingIntent(context.resources.getIdentifier("button_$i", "id", context.packageName), pendingIntent)
         }
@@ -129,12 +126,11 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
 
     private fun updateTextViews(views: RemoteViews) {
         // Update widget_input with the user's input
-        Log.d("CurrencyWidgetProvider", "Updating widget_input with text: $inputText")
         views.setTextViewText(R.id.widget_input, inputText)
 
         // Calculate the conversion and update widget_converted_value
         val pesos = inputText.toDoubleOrNull() ?: 0.0
-        val euros = pesos * conversionRate
+        val euros = pesos * euroToUyu
         val formattedEuros = String.format("€%.2f", euros)
         Log.d("CurrencyWidgetProvider", "Updating widget_converted_value with text: $formattedEuros")
         views.setTextViewText(R.id.widget_converted_value, formattedEuros)
