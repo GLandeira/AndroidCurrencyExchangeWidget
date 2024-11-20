@@ -35,7 +35,7 @@ class CurrencyFetchWorker(context: Context, workerParams: WorkerParameters, useA
 //                rates = mapOf("UYU" to 1.0, "USD" to 2.0)
 //            }
 
-            rates = mapOf("UYU" to 1.0, "USD" to 2.0)
+//            rates = mapOf("UYU" to 1.0, "USD" to 2.0)
         }
 
         if (rates.isNotEmpty()) {
