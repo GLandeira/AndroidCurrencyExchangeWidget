@@ -15,11 +15,11 @@ class CurrencyFetchWorker(context: Context, workerParams: WorkerParameters) : Wo
 
         val apiKey = BuildConfig.API_KEY
         val baseCurrency = "EUR"
-        val targetCurrencies = arrayOf("UYU", "USD")
+        val targetCurrencies = arrayOf("UYU", "USD", "ARS")
 
-        //Log.d("CurrencyWidgetProvider", "using api: $apiKey")
-//        val rates = fetchConversionRate(apiKey, baseCurrency, targetCurrencies)
-//        Log.d("CurrencyWidgetProvider", "Retrieved conversion rates: $rates")
+        Log.d("CurrencyWidgetProvider", "using api: $apiKey")
+        val rates = fetchConversionRate(apiKey, baseCurrency, targetCurrencies)
+        Log.d("CurrencyWidgetProvider", "Retrieved conversion rates: $rates")
 
 //        var rates: Map<String, Double> = emptyMap()
 //        val randomNumber = (1..10).random()
@@ -29,7 +29,7 @@ class CurrencyFetchWorker(context: Context, workerParams: WorkerParameters) : Wo
 //            rates = mapOf("UYU" to 1.0, "USD" to 2.0)
 //        }
 
-        val rates = mapOf("UYU" to 1.0, "USD" to 2.0)
+//        val rates = mapOf("UYU" to 1.0, "USD" to 2.0)
 
         if (rates.isNotEmpty()) {
             saveRatesToPreferences(rates)

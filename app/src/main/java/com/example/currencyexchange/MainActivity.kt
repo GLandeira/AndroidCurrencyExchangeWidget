@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
             CurrencyExchangeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "Chiara <3",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -74,6 +74,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     CurrencyExchangeTheme {
-        Greeting("Android")
+        Greeting("Chiara <3")
     }
 }

@@ -11,11 +11,38 @@ import android.widget.RemoteViews
 
 class CurrencyWidgetProvider : AppWidgetProvider() {
     private var inputText = "0"
+
+    // Placeholder exchanges
     private var euroToUyu = 40.0
+    private var euroToUsd = 1.05
+    private var euroToArs = 1050.0
+
+    // Toggle functionality
+    private var currentCurrency = "UYU"
+    private val currencies = arrayOf("UYU", "USD", "ARS")
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+
+        // Initialize currency in SharedPreferences
+        val prefs = context.getSharedPreferences("CurrencyPrefs", Context.MODE_PRIVATE)
+        if (!prefs.contains("current_currency")) {
+            prefs.edit().putString("current_currency", "UYU").apply()
+        }
+
+        // Log for debugging
+        Log.d("CurrencyWidgetProvider", "Widget enabled. Default currency set to UYU.")
+    }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        val prefs = context.getSharedPreferences("CurrencyPrefs", Context.MODE_PRIVATE)
+        currentCurrency = prefs.getString("current_currency", "UYU") ?: "UYU" // Load the current currency
+
         for (appWidgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.widget_layout)
+
+            // Update the toggle button text to reflect the current currency
+            views.setTextViewText(R.id.button_toggle_currency, currentCurrency)
 
             // Set up button intents
             setButtonIntents(context, views, appWidgetId)
@@ -27,6 +54,10 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
+
+        // Retrieve the current currency from SharedPreferences
+        val prefs = context.getSharedPreferences("CurrencyPrefs", Context.MODE_PRIVATE)
+        currentCurrency = prefs.getString("current_currency", "UYU") ?: "UYU" // Use class-level variable
 
         val action = intent.action
         Log.d("CurrencyWidgetProvider", "Received action: $action")
@@ -54,6 +85,19 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
                 "ACTION_RESET" -> {
                     inputText = "0" // Reset input
                 }
+                "TOGGLE_CURRENCY" -> {
+                    val currentIndex = currencies.indexOf(currentCurrency)
+                    val nextIndex = (currentIndex + 1) % currencies.size
+                    currentCurrency = currencies[nextIndex]
+
+                    // Save the updated currency
+                    prefs.edit().putString("current_currency", currentCurrency).apply()
+
+                    // Update the toggle button text
+                    views.setTextViewText(R.id.button_toggle_currency, currentCurrency)
+
+                    Log.d("CurrencyWidgetProvider", "Selected currency: $currentCurrency")
+                }
             }
 
             saveInputText(context, appWidgetId, inputText) // Save the updated inputText
@@ -61,10 +105,18 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
             // Retrieve the stored conversion rates
             val prefs = context.applicationContext.getSharedPreferences("CurrencyRates", Context.MODE_PRIVATE)
 
-            euroToUyu = prefs.getFloat("UYU", 0.0f).toDouble()
-            //val euroToUsd = prefs.getFloat("USD", 0.0f).toDouble()
+            val euroToUyuConversion = prefs.getFloat("UYU", 0.0f).toDouble()
+            if(euroToUyuConversion != 0.0) euroToUyu = euroToUyuConversion
 
-            Log.d("CurrencyWidgetProvider", "Retrieved conversion rates from applicationContext: $euroToUyu")
+            val euroToUsdConversion = prefs.getFloat("USD", 0.0f).toDouble()
+            if(euroToUsdConversion != 0.0) euroToUsd = euroToUsdConversion
+
+            val euroToArsConversion = prefs.getFloat("ARS", 0.0f).toDouble()
+            if(euroToArsConversion != 0.0) euroToArs = euroToArsConversion
+
+            Log.d("CurrencyWidgetProvider", "Retrieved conversion rates from applicationContext UYU: $euroToUyuConversion")
+            Log.d("CurrencyWidgetProvider", "Retrieved conversion rates from applicationContext USD: $euroToUsdConversion")
+            Log.d("CurrencyWidgetProvider", "Retrieved conversion rates from applicationContext ARS: $euroToArsConversion")
 
             // Update both TextViews
             updateTextViews(views)
@@ -120,8 +172,16 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
             action = "ACTION_RESET"
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         }
-        val resetPendingIntent = PendingIntent.getBroadcast(context, 12, resetIntent, flags )
+        val resetPendingIntent = PendingIntent.getBroadcast(context, 12, resetIntent, flags)
         views.setOnClickPendingIntent(R.id.button_reset, resetPendingIntent)
+
+        // Currency Button
+        val toggleIntent = Intent(context, CurrencyWidgetProvider::class.java).apply {
+            action = "TOGGLE_CURRENCY"
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
+        val togglePendingIntent = PendingIntent.getBroadcast(context, 13, toggleIntent, flags)
+        views.setOnClickPendingIntent(R.id.button_toggle_currency, togglePendingIntent)
     }
 
     private fun updateTextViews(views: RemoteViews) {
@@ -129,8 +189,14 @@ class CurrencyWidgetProvider : AppWidgetProvider() {
         views.setTextViewText(R.id.widget_input, inputText)
 
         // Calculate the conversion and update widget_converted_value
-        val pesos = inputText.toDoubleOrNull() ?: 0.0
-        val euros = pesos * euroToUyu
+        val amount = inputText.toDoubleOrNull() ?: 0.0
+        val rate = when (currentCurrency) {
+            "USD" -> euroToUsd
+            "ARS" -> euroToArs
+            else -> euroToUyu
+        }
+        val euros = amount / rate
+
         val formattedEuros = String.format("€%.2f", euros)
         Log.d("CurrencyWidgetProvider", "Updating widget_converted_value with text: $formattedEuros")
         views.setTextViewText(R.id.widget_converted_value, formattedEuros)
