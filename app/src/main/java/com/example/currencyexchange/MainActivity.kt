@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
 
         // Feature flags
         val inputData = Data.Builder()
-            .putBoolean("useAPI", true) // Pass your toggle flag
+            .putBoolean("useAPI", false) // Pass your toggle flag
             .build()
 
         // Schedule a one-time work request to run immediately
