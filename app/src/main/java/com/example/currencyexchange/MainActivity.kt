@@ -38,9 +38,15 @@ class MainActivity : ComponentActivity() {
             .setRequiredNetworkType(NetworkType.CONNECTED) // Require network connectivity
             .build()
 
+        // Feature flags
+        val inputData = Data.Builder()
+            .putBoolean("useAPI", true) // Pass your toggle flag
+            .build()
+
         // Schedule a one-time work request to run immediately
         val oneTimeWorkRequest = OneTimeWorkRequestBuilder<CurrencyFetchWorker>()
             .setConstraints(constraints)
+            .setInputData(inputData)
             .build()
 
         WorkManager.getInstance(this).enqueueUniqueWork(
@@ -52,6 +58,7 @@ class MainActivity : ComponentActivity() {
         // Schedule periodic work
         val workRequest = PeriodicWorkRequestBuilder<CurrencyFetchWorker>(0, TimeUnit.HOURS)
             .setConstraints(constraints)
+            .setInputData(inputData)
             .build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
