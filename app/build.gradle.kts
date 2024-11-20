@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -36,6 +38,29 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    // Load local.properties
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { stream ->
+            localProperties.load(stream)
+        }
+    }
+
+    // Fetch the API key from local.properties
+    val apiKey = localProperties.getProperty("API_KEY", "")
+
+    // Add the API key to BuildConfig
+    buildTypes {
+        getByName("debug") {
+            buildConfigField("String", "API_KEY", "\"$apiKey\"")
+        }
+        getByName("release") {
+            buildConfigField("String", "API_KEY", "\"$apiKey\"")
+        }
     }
 }
 
@@ -49,6 +74,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.material)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
