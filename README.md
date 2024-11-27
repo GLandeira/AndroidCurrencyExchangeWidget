@@ -4,7 +4,7 @@
 
 # AndroidCurrencyExchangeWidget
 
-A dynamic and interactive Android home screen widget that provides real-time currency exchange conversions between multiple currencies. It ensures the widget stays up-to-date with the latest conversion rates even when the app is not in use.
+A dynamic and interactive Android home screen widget that provides real-time currency exchange conversions between multiple currencies. It ensures the widget stays up-to-date with the latest conversion rates even when the app is not in use. Thought and tested with Android 10 and 13, and phones Huawei p30 and Samsung s20fe.
 
 ### Built With
 * [![AndroidStudio][AndroidStudio.com]][AndroidStudio-url]
