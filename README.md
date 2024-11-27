@@ -87,7 +87,8 @@ EXCHANGE_RATES_API_KEY=your_api_key
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+<br>
+<br>
 Used this [template](https://github.com/othneildrew/Best-README-Template/blob/main/README.md) to create this readme.
 
 <!-- MARKDOWN LINKS & IMAGES -->
